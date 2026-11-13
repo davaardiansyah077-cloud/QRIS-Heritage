@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>QRIS-HERITAGE PASS – Prototipe</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,800&family=Plus+Jakarta+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#E9EEED;--card:#fff;--ink:#12292E;--mut:#5B6F73;--pri:#0F4C5C;--priInk:#fff;--brass:#C8962E;--brick:#A8402F;--ok:#2E7D5B;--line:#D5DEDD;--shell:#cfd8d7;color-scheme:light}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0E1A1D;--card:#17272B;--ink:#E7EFEE;--mut:#93A8AC;--pri:#4FA3B5;--priInk:#06161A;--brass:#E0B04F;--brick:#E2806D;--ok:#5BC49A;--line:#27393D;--shell:#050B0C;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#0E1A1D;--card:#17272B;--ink:#E7EFEE;--mut:#93A8AC;--pri:#4FA3B5;--priInk:#06161A;--brass:#E0B04F;--brick:#E2806D;--ok:#5BC49A;--line:#27393D;--shell:#050B0C;color-scheme:dark}
+*{box-sizing:border-box;margin:0}
+html,body{height:100%}
+body{background:var(--shell);font-family:'Plus Jakarta Sans',system-ui,sans-serif;color:var(--ink);display:flex;justify-content:center;align-items:center}
+.phone{width:100%;max-width:400px;height:100%;max-height:820px;background:var(--bg);display:flex;flex-direction:column;position:relative;overflow:hidden;padding-top:env(safe-area-inset-top,0px)}
+@media(min-width:440px){.phone{border-radius:36px;border:8px solid #000;height:min(820px,96%)}}
+h1,h2,.serif{font-family:'Fraunces',Georgia,serif}
+main{flex:1;overflow-y:auto;padding:16px 16px 12px}
+nav{display:flex;background:var(--card);border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom,0px)}
+nav button{flex:1;border:0;background:none;padding:10px 0 9px;font:500 11px inherit;font-family:inherit;color:var(--mut);cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:3px}
+nav button span{font-size:20px}
+nav button[aria-selected=true]{color:var(--pri);font-weight:700}
+button:focus-visible{outline:2px solid var(--brass);outline-offset:2px}
+.hero{background:var(--pri);color:var(--priInk);border-radius:20px;padding:18px;position:relative;overflow:hidden}
+.hero small{opacity:.8;font-size:12px}
+.hero h1{font-size:24px;line-height:1.15;margin:4px 0 14px;font-weight:800}
+.big{display:flex;align-items:baseline;gap:8px}
+.big b{font:800 44px 'Fraunces',serif}
+.bar{height:8px;background:rgba(255,255,255,.25);border-radius:9px;margin:12px 0 6px;overflow:hidden}
+.bar i{display:block;height:100%;background:var(--brass);border-radius:9px;transition:width .5s}
+.row{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.card{background:var(--card);border-radius:16px;padding:14px;margin-top:12px;border:1px solid var(--line)}
+h2{font-size:18px;margin:18px 2px 0;font-weight:600}
+.sub{font-size:12px;color:var(--mut);margin:2px 2px 0}
+.stamps{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:10px}
+.stamp{aspect-ratio:1;border-radius:14px;border:1.5px dashed var(--line);display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:10px;text-align:center;color:var(--mut);padding:3px;background:var(--card)}
+.stamp span{font-size:22px;filter:grayscale(1);opacity:.5}
+.stamp.on{border:1.5px solid var(--brass);color:var(--ink);font-weight:700}
+.stamp.on span{filter:none;opacity:1}
+.mile{display:flex;gap:10px;align-items:center;padding:9px 0;border-top:1px solid var(--line);font-size:13px}
+.mile:first-child{border:0}
+.dot{width:26px;height:26px;border-radius:50%;background:var(--line);display:grid;place-items:center;font-size:12px;font-weight:700;flex:none}
+.mile.on .dot{background:var(--ok);color:#fff}
+.chip{font-size:10.5px;font-weight:700;padding:3px 8px;border-radius:20px;background:var(--brick);color:#fff;white-space:nowrap}
+.chip.g{background:var(--ok)}
+.chip.n{background:var(--line);color:var(--mut)}
+.btn{border:0;border-radius:12px;background:var(--pri);color:var(--priInk);font:700 14px inherit;font-family:inherit;padding:12px 16px;cursor:pointer;width:100%}
+.btn.s{width:auto;padding:8px 14px;font-size:12px}
+.btn.alt{background:var(--brass);color:#1b1405}
+.btn:disabled{opacity:.4;cursor:default}
+.map{background:var(--card);border-radius:16px;border:1px solid var(--line);overflow:hidden}
+.map svg{display:block;width:100%}
+.pin{cursor:pointer}
+.sheet{position:absolute;inset:0;background:rgba(0,0,0,.5);display:flex;align-items:flex-end;z-index:5}
+.sheet>div{background:var(--card);width:100%;border-radius:24px 24px 0 0;padding:20px 18px calc(20px + env(safe-area-inset-bottom,0px));animation:up .25s}
+@keyframes up{from{transform:translateY(40px);opacity:0}}
+@media(prefers-reduced-motion:reduce){.sheet>div{animation:none}.bar i{transition:none}}
+.qr{width:150px;height:150px;margin:12px auto;background:#fff;padding:8px;border-radius:12px;border:1px solid var(--line)}
+.toast{position:absolute;left:16px;right:16px;top:calc(12px + env(safe-area-inset-top,0px));background:var(--ink);color:var(--bg);padding:12px 14px;border-radius:14px;font-size:13px;z-index:9;animation:up .25s}
+.voucher{display:flex;border-radius:14px;overflow:hidden;background:var(--card);border:1px solid var(--line);margin-top:10px}
+.voucher .a{background:var(--brass);color:#1b1405;padding:14px 12px;font:800 15px 'Fraunces',serif;display:grid;place-items:center;min-width:92px;text-align:center}
+.voucher.used .a{background:var(--line);color:var(--mut)}
+.voucher .b{padding:12px;flex:1;font-size:13px}
+.voucher .b p{color:var(--mut);font-size:11.5px;margin:2px 0 8px}
+.kpi{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}
+.kpi div{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px}
+.kpi b{font:800 24px 'Fraunces',serif;display:block}
+.kpi small{color:var(--mut);font-size:11px}
+.hb{display:flex;align-items:center;gap:8px;font-size:11.5px;margin:7px 0}
+.hb span:first-child{width:96px;flex:none;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.hb div{flex:1;height:10px;background:var(--line);border-radius:6px;overflow:hidden}
+.hb i{display:block;height:100%;background:var(--pri);transition:width .5s}
+.hb i.low{background:var(--brick)}
+.hb em{width:28px;text-align:right;font-style:normal;color:var(--mut)}
+.note{font-size:11px;color:var(--mut);text-align:center;margin:16px 0 4px}
+.hist{font-size:12.5px;padding:8px 0;border-top:1px solid var(--line)}
+</style>
+</head>
+<body>
+<div class="phone" id="app">
+  <main id="view"></main>
+  <nav role="tablist">
+    <button role="tab" data-t="pass"><span>🎫</span>Pass</button>
+    <button role="tab" data-t="map"><span>🗺️</span>Jelajah</button>
+    <button role="tab" data-t="rew"><span>🎁</span>Reward</button>
+    <button role="tab" data-t="dash"><span>📊</span>Dashboard</button>
+  </nav>
+</div>
+<script>
+const M=[
+ {id:0,n:'Kopi Jembatan Merah',c:'Kuliner',e:'☕',x:70,y:70,base:120},
+ {id:1,n:'Batik Ampel',c:'Fesyen',e:'👘',x:210,y:50,base:85},
+ {id:2,n:'Kerupuk Kota Lama',c:'Oleh-oleh',e:'🥨',x:300,y:120,base:30},
+ {id:3,n:'Galeri Kriya Heritage',c:'Kerajinan',e:'🏺',x:120,y:160,base:14},
+ {id:4,n:'Es Dawet Pak Joko',c:'Kuliner',e:'🥤',x:250,y:190,base:60},
+ {id:5,n:'Pernak-Pernik Kota Tua',c:'Souvenir',e:'🎁',x:50,y:215,base:9},
+ {id:6,n:'Becak Wisata Heritage',c:'Jasa',e:'🛺',x:340,y:210,base:22},
+ {id:7,n:'Lontong Balap Bu Min',c:'Kuliner',e:'🍜',x:170,y:100,base:45}
+];
+const avg=M.reduce((s,m)=>s+m.base,0)/M.length;
+const S={tab:'pass',tx:[],vouchers:[],visited:new Set(),bonus:new Set(),pts:0,sheet:null,toast:null,admin:false,seq:0};
+const rp=n=>'Rp'+n.toLocaleString('id-ID');
+const cnt=id=>M[id].base+S.tx.filter(t=>t.id==id).length;
+const isLow=id=>cnt(id)<avg*0.5;
+const $=s=>document.querySelector(s);
+function say(t){S.toast=t;render();clearTimeout(say.h);say.h=setTimeout(()=>{S.toast=null;render()},2600)}
+const MILES=[{n:2,r:10000},{n:3,r:15000},{n:5,r:25000}];
+
+function pay(id,amt){
+  const prevN=S.visited.size,first=!S.visited.has(id);
+  const same=S.tx.filter(t=>t.id==id).length;
+  S.tx.push({id,amt});S.visited.add(id);
+  let msg='Pembayaran QRIS ke '+M[id].n+' terverifikasi.';
+  if(first)MILES.forEach(m=>{if(prevN<m.n&&S.visited.size>=m.n){S.vouchers.push({k:++S.seq,t:'Cross-Merchant Reward',d:'Terbuka setelah '+m.n+' merchant berbeda',amt:m.r,used:false,code:'HP-'+(1000+S.seq*37)});msg+=' 🎉 Voucher '+rp(m.r)+' terbuka!'}});
+  if(first&&isLow(id)&&!S.bonus.has(id)){S.bonus.add(id);S.vouchers.push({k:++S.seq,t:'Priority Merchant Bonus',d:'Bonus karena mendukung '+M[id].n,amt:5000,used:false,code:'HP-'+(1000+S.seq*37)});msg+=' ⭐ Bonus Priority!'}
+  if(!first&&same>=1&&same%2==1){S.pts+=10;msg+=' +10 poin Repeat Visit.'}
+  S.sheet=null;say(msg);
+}
+function redeem(k,id){
+  const v=S.vouchers.find(v=>v.k==k);v.used=true;v.at=M[id].n;
+  S.tx.push({id,amt:v.amt,redeem:true});S.sheet=null;say('Voucher '+rp(v.amt)+' ditukar di '+M[id].n+'.');
+}
+const qrSVG=()=>{let r='',s=21,u=6;for(let i=0;i<s;i++)for(let j=0;j<s;j++){const f=(i<7&&j<7)||(i<7&&j>13)||(i>13&&j<7);const ring=f&&!((i%6>0&&i%6<6&&j%6>0&&j%6<6)&&!((i%6>1&&i%6<5)&&(j%6>1&&j%6<5)));if(f?(i%6==0||j%6==0||(i%6>=2&&i%6<=4&&j%6>=2&&j%6<=4)||(i>13&&(i-14)%6==0)):((i*7+j*13+i*j)%3==0))r+=`<rect x="${j*u}" y="${i*u}" width="${u}" height="${u}" fill="#12292E"/>`}return `<svg class="qr" viewBox="0 0 126 126" aria-label="Contoh kode QRIS">${r}</svg>`};
+
+function vPass(){
+  const n=S.visited.size,nxt=MILES.find(m=>m.n>n),max=5;
+  return `<div class="hero"><small>Heritage Pass aktif · Kota Lama Surabaya</small>
+  <h1>Jelajahi lebih banyak, dapat lebih banyak.</h1>
+  <div class="big"><b>${n}</b><span>merchant berbeda</span></div>
+  <div class="bar"><i style="width:${Math.min(100,n/max*100)}%"></i></div>
+  <small>${nxt?`${nxt.n-n} merchant lagi untuk voucher ${rp(nxt.r)}`:'Semua tahap reward sudah terbuka'}</small>
+  <div class="row" style="margin-top:12px"><small>Kode pass: <b>HP-7Q2K-0418</b></small><small>${S.pts} poin</small></div></div>
+  <h2>Stempel merchant</h2><p class="sub">Transaksi berulang di satu merchant tetap dihitung satu stempel.</p>
+  <div class="stamps">${M.map(m=>`<div class="stamp ${S.visited.has(m.id)?'on':''}"><span>${m.e}</span>${m.n.split(' ').slice(0,2).join(' ')}</div>`).join('')}</div>
+  <div class="card"><div class="serif" style="font-weight:600">Tahap reward</div>
+  ${MILES.map(m=>`<div class="mile ${n>=m.n?'on':''}"><div class="dot">${n>=m.n?'✓':m.n}</div><div style="flex:1">${m.n} merchant berbeda<br><small style="color:var(--mut)">Voucher ${rp(m.r)}</small></div>${n>=m.n?'<span class="chip g">Terbuka</span>':'<span class="chip n">Terkunci</span>'}</div>`).join('')}</div>
+  <button class="btn alt" style="margin-top:12px" data-go="map">Cari merchant untuk dikunjungi</button>
+  ${S.tx.length?`<div class="card"><div class="serif" style="font-weight:600;margin-bottom:4px">Riwayat transaksi</div>${S.tx.slice().reverse().slice(0,5).map(t=>`<div class="hist row"><span>${M[t.id].e} ${M[t.id].n}${t.redeem?' <small>(voucher)</small>':''}</span><b>${rp(t.amt)}</b></div>`).join('')}</div>`:''}
+  <p class="note">Prototipe ilustrasi · data merchant fiktif</p>`;
+}
+function vMap(){
+  return `<h2 style="margin-top:0">Peta kawasan</h2><p class="sub">Ketuk pin untuk melihat UMKM dan membayar dengan QRIS. Pin merah = Priority Merchant.</p>
+  <div class="map" style="margin-top:10px"><svg viewBox="0 0 400 270" role="img" aria-label="Peta skematis Kota Lama Surabaya">
+  <rect width="400" height="270" fill="var(--bg)"/>
+  <path d="M0 135H400M200 0V270M0 40L400 230" stroke="var(--line)" stroke-width="14" fill="none"/>
+  <path d="M0 135H400M200 0V270" stroke="var(--card)" stroke-width="2" stroke-dasharray="6 6" fill="none"/>
+  <text x="14" y="258" font-size="10" fill="var(--mut)">Skema tidak berskala</text>
+  ${M.map(m=>{const low=isLow(m.id),v=S.visited.has(m.id);return `<g class="pin" tabindex="0" role="button" aria-label="${m.n}" data-m="${m.id}"><circle cx="${m.x}" cy="${m.y}" r="19" fill="${low?'var(--brick)':'var(--pri)'}" stroke="${v?'var(--brass)':'var(--card)'}" stroke-width="${v?4:2.5}"/><text x="${m.x}" y="${m.y+6}" text-anchor="middle" font-size="17">${m.e}</text>${v?`<circle cx="${m.x+14}" cy="${m.y-14}" r="8" fill="var(--ok)"/><text x="${m.x+14}" y="${m.y-10}" text-anchor="middle" font-size="10" fill="#fff">✓</text>`:''}</g>`}).join('')}
+  </svg></div>
+  ${M.map(m=>`<div class="card row" style="margin-top:8px;padding:10px 12px;cursor:pointer" data-m="${m.id}"><div>${m.e} <b style="font-size:13px">${m.n}</b><br><small style="color:var(--mut)">${m.c}</small></div>${isLow(m.id)?'<span class="chip">⭐ Bonus +Rp5.000</span>':S.visited.has(m.id)?'<span class="chip g">Dikunjungi</span>':''}</div>`).join('')}`;
+}
+function vRew(){
+  const act=S.vouchers.filter(v=>!v.used),use=S.vouchers.filter(v=>v.used);
+  return `<h2 style="margin-top:0">Reward saya</h2><p class="sub">Voucher dapat ditukar di merchant peserta lain. Tiap voucher hanya sekali pakai.</p>
+  ${!S.vouchers.length?`<div class="card" style="text-align:center;color:var(--mut);font-size:13px">Belum ada voucher. Bayar di 2 merchant berbeda untuk membuka reward pertama.<br><br><button class="btn s" data-go="map">Buka peta</button></div>`:''}
+  ${[...act,...use].map(v=>`<div class="voucher ${v.used?'used':''}"><div class="a">${rp(v.amt)}</div><div class="b"><b>${v.t}</b><p>${v.used?'Ditukar di '+v.at:v.d} · ${v.code}</p>${v.used?'<span class="chip n">Sudah dipakai</span>':`<button class="btn s" data-red="${v.k}">Tukar di merchant</button>`}</div></div>`).join('')}
+  ${S.pts?`<div class="card row"><span>Poin Repeat Visit</span><b>${S.pts} poin</b></div>`:''}`;
+}
+function vDash(){
+  const t=S.tx,tot=M.map(m=>cnt(m.id)),sum=tot.reduce((a,b)=>a+b,0),top3=[...tot].sort((a,b)=>b-a).slice(0,3).reduce((a,b)=>a+b,0);
+  const mx=Math.max(...tot),red=S.vouchers.length?Math.round(S.vouchers.filter(v=>v.used).length/S.vouchers.length*100):0;
+  const dv=S.visited.size,omzet=t.reduce((a,b)=>a+b.amt,0);
+  return `<div class="row"><h2 style="margin:0">Heritage Economic Dashboard</h2></div>
+  <p class="sub">Tampilan pengelola kawasan. Angka berubah saat Anda mensimulasikan transaksi di tab Jelajah.</p>
+  <div class="kpi">
+   <div><b>${M.length}/${M.length}</b><small>Merchant aktif</small></div>
+   <div><b>${t.length}</b><small>Transaksi sesi ini</small></div>
+   <div><b>${dv}</b><small>Merchant berbeda per wisatawan</small></div>
+   <div><b>${red}%</b><small>Tingkat penukaran reward</small></div>
+   <div><b>${Math.round(top3/sum*100)}%</b><small>Konsentrasi 3 merchant teratas</small></div>
+   <div><b>${rp(omzet)}</b><small>Nilai transaksi sesi ini</small></div></div>
+  <div class="card"><div class="serif" style="font-weight:600;margin-bottom:6px">Sebaran transaksi per merchant</div>
+  ${M.map((m,i)=>`<div class="hb"><span>${m.n}</span><div><i class="${isLow(i)?'low':''}" style="width:${tot[i]/mx*100}%"></i></div><em>${tot[i]}</em></div>`).join('')}
+  <small style="color:var(--mut);font-size:11px">Merah = Priority Merchant (transaksi relatif rendah). Angka dasar adalah data simulasi.</small></div>`;
+}
+function sheet(){
+  const s=S.sheet;if(!s)return'';
+  if(s.type=='pay'){const m=M[s.id];return `<div class="sheet" data-x><div>
+   <div class="row"><div><div class="serif" style="font-size:20px;font-weight:600">${m.e} ${m.n}</div><small style="color:var(--mut)">${m.c} · UMKM peserta</small></div>${isLow(s.id)?'<span class="chip">⭐ Priority</span>':S.visited.has(s.id)?'<span class="chip g">Dikunjungi</span>':''}</div>
+   ${qrSVG()}<p class="sub" style="text-align:center">Pindai kode QRIS merchant di kasir, lalu bayar dari aplikasi bank atau e-wallet Anda.</p>
+   <div class="row" style="margin:12px 0"><label for="amt">Nilai belanja (simulasi)</label><select id="amt" style="padding:8px;border-radius:10px;border:1px solid var(--line);background:var(--bg);color:var(--ink);font:inherit"><option>15000</option><option>25000</option><option>50000</option></select></div>
+   <p class="sub" style="margin:0 0 12px">${S.visited.has(s.id)?'Merchant ini sudah tercatat. Transaksi berulang tidak menambah stempel baru.':isLow(s.id)?'Merchant baru. Anda berpeluang mendapat Priority Merchant Bonus.':'Merchant baru. Anda akan mendapat stempel baru.'}</p>
+   <button class="btn" data-pay="${s.id}">Simulasikan pembayaran QRIS</button></div></div>`}
+  const v=S.vouchers.find(v=>v.k==s.k);
+  return `<div class="sheet" data-x><div><div class="serif" style="font-size:20px;font-weight:600">Tukar voucher ${rp(v.amt)}</div><p class="sub" style="margin:4px 0 10px">Pilih merchant peserta tempat Anda menggunakan voucher.</p>${M.map(m=>`<button class="btn s" style="width:100%;text-align:left;margin-top:6px;background:var(--bg);color:var(--ink);border:1px solid var(--line)" data-use="${m.id}">${m.e} ${m.n}</button>`).join('')}</div></div>`;
+}
+function render(){
+  const top=$('#view')?$('#view').scrollTop:0;
+  const v={pass:vPass,map:vMap,rew:vRew,dash:vDash}[S.tab]();
+  $('#view').innerHTML=v;$('#view').scrollTop=top;
+  document.querySelectorAll('nav button').forEach(b=>b.setAttribute('aria-selected',b.dataset.t==S.tab));
+  document.querySelectorAll('.sheet,.toast').forEach(e=>e.remove());
+  $('#app').insertAdjacentHTML('beforeend',sheet()+(S.toast?`<div class="toast" role="status">${S.toast}</div>`:''));
+}
+document.addEventListener('click',e=>{
+  const g=k=>e.target.closest(k);
+  if(g('nav button')){S.tab=g('nav button').dataset.t;S.sheet=null}
+  else if(g('[data-go]'))S.tab=g('[data-go]').dataset.go;
+  else if(g('[data-pay]'))return pay(+g('[data-pay]').dataset.pay,+$('#amt').value);
+  else if(g('[data-use]'))return redeem(S.sheet.k,+g('[data-use]').dataset.use);
+  else if(g('[data-red]'))S.sheet={type:'red',k:+g('[data-red]').dataset.red};
+  else if(g('[data-m]')&&!g('.sheet'))S.sheet={type:'pay',id:+g('[data-m]').dataset.m};
+  else if(e.target.matches('.sheet'))S.sheet=null;
+  else return;
+  render();
+});
+document.addEventListener('keydown',e=>{if(e.key=='Enter'&&e.target.dataset&&e.target.dataset.m){S.sheet={type:'pay',id:+e.target.dataset.m};render()}});
+render();
+</script>
+</body>
+</html>
